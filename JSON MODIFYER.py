@@ -29,19 +29,22 @@ def display_qa_pairs(qa_pairs):
     else:
         print("No Q&A pairs found.")
 
-def fix_json(filename):
-    """Attempt to fix common JSON issues."""
+def fix_json(filename, lowercase=False):
+    """Attempt to fix common JSON issues and optionally lowercase all letters."""
     with open(filename, 'r') as file:
         content = file.read()
 
     # Attempt to fix common JSON issues (this is a basic fix)
-    # You might want to improve this function with more sophisticated parsing
     content = content.replace(",}", "}").replace(",]", "]")  # Remove trailing commas
     content = content.replace("}{", "},{")  # Ensure objects are separated properly
 
     # Try to load the fixed content
     try:
         fixed_qa_pairs = json.loads(content)
+        if lowercase:
+            # Lowercase all keys and values
+            fixed_qa_pairs = {k.lower(): v.lower() for k, v in fixed_qa_pairs.items()}
+
         with open(filename, 'w') as file:
             json.dump(fixed_qa_pairs, file, indent=4)
         print(f"Successfully fixed and saved the JSON file '{filename}'.")
@@ -82,7 +85,8 @@ def main():
                 print("Question not found.")
 
         elif action == 'f':
-            fix_json(filename)
+            lowercase = input("Would you like to lowercase all letters? (y/n): ").lower() == 'y'
+            fix_json(filename, lowercase)
             qa_pairs = load_qa_pairs(filename)  # Reload to see fixed Q&A pairs
             display_qa_pairs(qa_pairs)
 
@@ -97,3 +101,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
