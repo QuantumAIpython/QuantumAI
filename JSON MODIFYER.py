@@ -1,6 +1,6 @@
 import json
 import os
-
+# note this is for if you do not know how to code in JSON and add to the code
 def load_qa_pairs(filename):
     """Load Q&A pairs from the specified JSON file."""
     if os.path.exists(filename):
