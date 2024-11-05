@@ -1,0 +1,5 @@
+here is the script to compile it into a Linux app
+
+pyinstaller --onefile --add-data "qa_pairs:." QuantumAI.py
+
+is 
