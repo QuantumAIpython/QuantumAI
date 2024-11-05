@@ -1,6 +1,15 @@
 import customtkinter as ctk
 import json
 import os
+import platform
+
+import platform
+
+if platform.system() != "Linux":
+    print("Not running on Linux.")
+else:
+    print("Running on Linux - executing code...")
+    
 
 # Function to load Q&A pairs from JSON file
 def load_qa_pairs(filename):
