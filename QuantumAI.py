@@ -2,28 +2,42 @@ import customtkinter as ctk
 import json
 import os
 import platform
-
-import platform
+import sys
 
 if platform.system() != "Linux":
     print("Not running on Linux.")
 else:
     print("Running on Linux - executing code...")
-    
+
+# Variable to control whether to print loaded Q&A pairs
+print_qa_pairs = False  # Set to True to enable printing of Q&A pairs, False to disable
 
 # Function to load Q&A pairs from JSON file
 def load_qa_pairs(filename):
-    if os.path.exists(filename):
-        with open(filename, 'r') as file:
+    # Detect if running as a PyInstaller executable
+    if getattr(sys, 'frozen', False):  # Checks if running as a bundled executable
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))  # Gets the script's directory
+
+    file_path = os.path.join(base_path, filename)
+
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as file:
             try:
                 qa_pairs = json.load(file)
                 # Ensure all keys are in lowercase for case-insensitive matching
-                return {key.lower(): value for key, value in qa_pairs.items()}
+                qa_pairs = {key.lower(): value for key, value in qa_pairs.items()}
+                
+                if print_qa_pairs:  # Print Q&A pairs if enabled
+                    print("Loaded Q&A pairs:", qa_pairs)
+                    
+                return qa_pairs
             except json.JSONDecodeError as e:
                 print(f"Error loading JSON: {e}")
                 return {}
     else:
-        print(f"File '{filename}' does not exist.")
+        print(f"File '{file_path}' does not exist.")
         return {}
 
 # User display name
@@ -36,9 +50,6 @@ class ChatBotApp:
 
         # Load Q&A pairs from JSON
         self.qa_pairs = load_qa_pairs("qa_pairs.json")
-
-        # Log the loaded Q&A pairs to ensure they are loaded correctly
-        print("Loaded Q&A pairs:", self.qa_pairs)
 
         # Chat display frame
         self.chat_frame = ctk.CTkFrame(master)
